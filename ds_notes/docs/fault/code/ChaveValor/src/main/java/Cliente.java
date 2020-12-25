@@ -14,7 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.sql.Timestamp;
+import java.text.SimpleDateFormat;  
+import java.util.Date; 
 
 public class Cliente
 {
@@ -70,11 +71,12 @@ public class Cliente
 		System.out.printf("3-delete:\n");
 		System.out.printf("4-test and set:\n");
 		
-		Timestamp ts = new Timestamp(System.currentTimeMillis());
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+		String ts  = dateFormat.format(new Date());//atualizo timestamp	
 		
 		int op;
-		String k,v,d,vers;
-		
+		String k,d,v;
+		int vers;
 		
 		op = ler.nextInt();
         switch (op){
@@ -84,10 +86,10 @@ public class Cliente
 				k = ler.next();
 				System.out.printf("Informe o valor:\n");
 				v = ler.next();
-				vers="1";
+				vers=1;   // sempre setamos a chave com valor 1
 				System.out.printf("Informe o dado:\n");
 				d = ler.next();
-                getValue = client.send(Message.valueOf("set:" + k + ":" + v + ":" + vers + ":" + ts + ":" + d));
+                getValue = client.send(Message.valueOf("set;" + k + ";" + v + ";" + vers + ";" + d + ";" + ts));
                 response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
                 System.out.println(response);
                 break;
@@ -96,7 +98,7 @@ public class Cliente
 			
 				System.out.printf("Informe a chave:\n");
 				k = ler.next();
-                getValue = client.sendReadOnly(Message.valueOf("get:" + k));
+                getValue = client.sendReadOnly(Message.valueOf("get;" + k));
                 response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
                 System.out.println(response);
                 break;
@@ -105,16 +107,16 @@ public class Cliente
 			
 				char a;
 				
-				System.out.printf("Deseja informar a chave (s/n):\n");
+				System.out.printf("Deseja informar a versão? (s/n):\n");
 				a = (char)System.in.read();
 				
 				if (a=='s'){
 				System.out.printf("Informe a chave:\n");
 				k = ler.next();
-				System.out.printf("Informe a versão:\n");
-				vers = ler.next();
+				System.out.printf("Informe a versão (apenas int):\n");
+				vers = ler.nextInt();
 				
-				getValue = client.send(Message.valueOf("delv:" + k + ":" + vers));
+				getValue = client.send(Message.valueOf("delv;" + k + ";" + vers));
                 response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
                 System.out.println(response);
 				}
@@ -122,7 +124,7 @@ public class Cliente
 				System.out.printf("Informe a chave:\n");
 				k = ler.next();
 				
-				getValue = client.send(Message.valueOf("del:" + k));
+				getValue = client.send(Message.valueOf("del;" + k));
                 response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
                 System.out.println("Resposta:" + response);
 				}
@@ -134,10 +136,10 @@ public class Cliente
 				k = ler.next();
 				System.out.printf("Informe o valor:\n");
 				v = ler.next();
-				System.out.printf("Informe a versão:\n");
-				vers = ler.next();
+				System.out.printf("Informe a versão (apenas int):\n");
+				vers = ler.nextInt();
 				
-				getValue = client.send(Message.valueOf("testandset:" + k + ":" + v + ":" + vers));
+				getValue = client.send(Message.valueOf("testandset;" + k + ";" + v + ";" + vers));
                 response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
                 System.out.println(response);
 				break;
