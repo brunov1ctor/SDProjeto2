@@ -68,7 +68,7 @@ public class MaquinaDeEstados extends BaseStateMachine
 				return f;
 				
 			}else{//a chave existe
-				final String result = "ERROR :" + opKeyValue[2]+ ", " +Integer.parseInt(opKeyValue[3])+ ", " +opKeyValue[4]+ ", " +opKeyValue[5];
+				final String result = "ERROR :" + opKeyValue[2]+ ", " +opKeyValue[3]+ ", " +opKeyValue[4]+ ", " +opKeyValue[5];
 				final CompletableFuture<Message> f = CompletableFuture.completedFuture(Message.valueOf(result));
 				final RaftProtos.RaftPeerRole role = trx.getServerRole();
 				LOG.info("{}:{} {} {}={}", role, getId(), opKeyValue[0], opKeyValue[1], opKeyValue[2]);
@@ -87,8 +87,8 @@ public class MaquinaDeEstados extends BaseStateMachine
 				Tupla t  = (Tupla)key2values.get(opKeyValue[1]); //pego minha tupla no mapa
 				
 				if(t.getvers()==Integer.parseInt(opKeyValue[3])){//se a versão for igual
-					key2values.remove(opKeyValue[1], t);
-					final String result = "SUCCESS :" + opKeyValue[2]+ ", " +Integer.parseInt(opKeyValue[3])+ ", " +opKeyValue[4]+ ", " +opKeyValue[5];
+					key2values.remove(opKeyValue[1]);
+					final String result = "SUCCESS :" + opKeyValue[2]+ ", " +opKeyValue[3]+ ", " +opKeyValue[4]+ ", " +opKeyValue[5];
 					final CompletableFuture<Message> f = CompletableFuture.completedFuture(Message.valueOf(result));
 					final RaftProtos.RaftPeerRole role = trx.getServerRole();
 					LOG.info("{}:{} {} {}={}", role, getId(), opKeyValue[0], opKeyValue[1], opKeyValue[2]);
@@ -99,7 +99,7 @@ public class MaquinaDeEstados extends BaseStateMachine
 					return f;
 				
 				}else{//a versao é diferente
-					final String result = "ERROR_WV :" + opKeyValue[2]+ ", " +Integer.parseInt(opKeyValue[3])+ ", " +opKeyValue[4]+ ", " +opKeyValue[5];
+					final String result = "ERROR_WV :" + opKeyValue[2]+ ", " +opKeyValue[3]+ ", " +opKeyValue[4]+ ", " +opKeyValue[5];
 					final CompletableFuture<Message> f = CompletableFuture.completedFuture(Message.valueOf(result));
 					final RaftProtos.RaftPeerRole role = trx.getServerRole();
 					LOG.info("{}:{} {} {}={}", role, getId(), opKeyValue[0], opKeyValue[1], opKeyValue[2]);
@@ -111,7 +111,7 @@ public class MaquinaDeEstados extends BaseStateMachine
 				}				
 				
 			}else{//a chave não foi encontrada
-					final String result = "ERROR_NE :" + opKeyValue[2]+ ", " +Integer.parseInt(opKeyValue[3])+ ", " +opKeyValue[4]+ ", " +opKeyValue[5];
+					final String result = "ERROR_NE :" + opKeyValue[2]+ ", " +opKeyValue[3]+ ", " +opKeyValue[4]+ ", " +opKeyValue[5];
 					final CompletableFuture<Message> f = CompletableFuture.completedFuture(Message.valueOf(result));
 					final RaftProtos.RaftPeerRole role = trx.getServerRole();
 					LOG.info("{}:{} {} {}={}", role, getId(), opKeyValue[0], opKeyValue[1], opKeyValue[2]);
@@ -124,12 +124,11 @@ public class MaquinaDeEstados extends BaseStateMachine
 		}
 		
 		if(opKeyValue[0].equals("del")){ // se a operação for delete
-			System.out.printf("aaaaaaaaaaaaaaaa");
+	
 			if(key2values.containsKey(opKeyValue[1])){ //e a chave for encontrada
-				Tupla t  = (Tupla)key2values.get(opKeyValue[1]);
 				
-				key2values.remove(opKeyValue[1], t);
-				final String result = "SUCCESS :" + opKeyValue[2]+ ", " +Integer.parseInt(opKeyValue[3])+ ", " +opKeyValue[4]+ ", " +opKeyValue[5];
+				key2values.remove(opKeyValue[1]);
+				final String result = "SUCCESS :" + opKeyValue[2]+ ", " +opKeyValue[3]+ ", " +opKeyValue[4]+ ", " +opKeyValue[5];
 				final CompletableFuture<Message> f = CompletableFuture.completedFuture(Message.valueOf(result));
 				final RaftProtos.RaftPeerRole role = trx.getServerRole();
 				LOG.info("{}:{} {} {}={}", role, getId(), opKeyValue[0], opKeyValue[1], opKeyValue[2]);
@@ -140,7 +139,8 @@ public class MaquinaDeEstados extends BaseStateMachine
 				return f;
 				
 			}else{//a chave não foi encontrada
-				final String result = "ERROR :" + opKeyValue[2]+ ", " +Integer.parseInt(opKeyValue[3])+ ", " +opKeyValue[4]+ ", " +opKeyValue[5];
+				
+				final String result = "ERROR :" + opKeyValue[2]+ ", " +opKeyValue[3]+ ", " +opKeyValue[4]+ ", " +opKeyValue[5];
 				final CompletableFuture<Message> f = CompletableFuture.completedFuture(Message.valueOf(result));
 				final RaftProtos.RaftPeerRole role = trx.getServerRole();
 				LOG.info("{}:{} {} {}={}", role, getId(), opKeyValue[0], opKeyValue[1], opKeyValue[2]);
@@ -213,12 +213,12 @@ public class MaquinaDeEstados extends BaseStateMachine
 		Tupla t  = (Tupla)key2values.get(opKey[1]);
 		
 		if(key2values.get(opKey[1]) != null){ //se a chave existir			
-			final String result = "SUCCESS :" + t.getv()+", "+ t.getvers()+", "+ t.getts()+", "+ t.getd();		
+			final String result = "SUCCESS :" + t.getv()+", "+ String.valueOf(t.getvers())+", "+ t.getts()+", "+ t.getd();		
 			LOG.debug("{}: {} = {}", opKey[0], opKey[1], result);
 			return CompletableFuture.completedFuture(Message.valueOf(result));
 			
 		}else{//se a chave não existir
-			final String result = "ERROR :" + t.getv()+", "+ t.getvers()+", "+ t.getts()+", "+ t.getd();		
+			final String result = "ERROR :" + t.getv()+", "+ String.valueOf(t.getvers())+", "+ t.getts()+", "+ t.getd();		
 			LOG.debug("{}: {} = {}", opKey[0], opKey[1], result);
 			return CompletableFuture.completedFuture(Message.valueOf(result));
 		}

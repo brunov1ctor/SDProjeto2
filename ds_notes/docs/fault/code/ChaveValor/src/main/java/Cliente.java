@@ -45,7 +45,8 @@ public class Cliente
 		novo = (char)System.in.read();
 		
 		}while(novo=='s');
-
+		
+		
         List<RaftPeer> addresses = id2addr.entrySet()
                 .stream()
                 .map(e -> new RaftPeer(RaftPeerId.valueOf(e.getKey()), e.getValue()))
@@ -79,75 +80,75 @@ public class Cliente
 		int vers;
 		
 		op = ler.nextInt();
-        switch (op){
-            case 1:
-							
-				System.out.printf("Informe a chave:\n");
-				k = ler.next();
-				System.out.printf("Informe o valor:\n");
-				v = ler.next();
-				vers=1;   // sempre setamos a chave com valor 1
-				System.out.printf("Informe o dado:\n");
-				d = ler.next();
-                getValue = client.send(Message.valueOf("set;" + k + ";" + v + ";" + vers + ";" + d + ";" + ts));
-                response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
-                System.out.println(response);
-                break;
+			switch (op){
+				case 1:
+								
+					System.out.printf("Informe a chave:\n");
+					k = ler.next();
+					System.out.printf("Informe o valor:\n");
+					v = ler.next();
+					vers=1;   // sempre setamos a chave com valor 1
+					System.out.printf("Informe o dado:\n");
+					d = ler.next();
+					getValue = client.send(Message.valueOf("set;" + k + ";" + v + ";" + vers + ";" + d + ";" + ts));
+					response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
+					System.out.println(response);
+					break;
+					
+				case 2:
 				
-            case 2:
+					System.out.printf("Informe a chave:\n");
+					k = ler.next();
+					getValue = client.sendReadOnly(Message.valueOf("get;" + k));
+					response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
+					System.out.println(response);
+					break;
+					
+				case 3:
+				
+					char a;
+					
+					System.out.printf("Deseja informar a versão? (s/n):\n");
+					a = (char)System.in.read();
+					
+					if (a=='s'){
+					System.out.printf("Informe a chave:\n");
+					k = ler.next();
+					System.out.printf("Informe a versão (apenas int):\n");
+					vers = ler.nextInt();
+					
+					getValue = client.send(Message.valueOf("delv;" + k + ";" + vers));
+					response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
+					System.out.println(response);
+					}
+					else{
+					System.out.printf("Informe a chave:\n");
+					k = ler.next();
+					
+					getValue = client.send(Message.valueOf("del;" + k));
+					response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
+					System.out.println("Resposta:" + response);
+					}
+					break;
+					
+				case 4:
+					
+					System.out.printf("Informe a chave:\n");
+					k = ler.next();
+					System.out.printf("Informe o valor:\n");
+					v = ler.next();
+					System.out.printf("Informe a versão (apenas int):\n");
+					vers = ler.nextInt();
+					
+					getValue = client.send(Message.valueOf("testandset;" + k + ";" + v + ";" + vers));
+					response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
+					System.out.println(response);
+					break;
+					
+				default:
+					System.out.println("comando inválido");
+			}
 			
-				System.out.printf("Informe a chave:\n");
-				k = ler.next();
-                getValue = client.sendReadOnly(Message.valueOf("get;" + k));
-                response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
-                System.out.println(response);
-                break;
-				
-			case 3:
-			
-				char a;
-				
-				System.out.printf("Deseja informar a versão? (s/n):\n");
-				a = (char)System.in.read();
-				
-				if (a=='s'){
-				System.out.printf("Informe a chave:\n");
-				k = ler.next();
-				System.out.printf("Informe a versão (apenas int):\n");
-				vers = ler.nextInt();
-				
-				getValue = client.send(Message.valueOf("delv;" + k + ";" + vers));
-                response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
-                System.out.println(response);
-				}
-				else{
-				System.out.printf("Informe a chave:\n");
-				k = ler.next();
-				
-				getValue = client.send(Message.valueOf("del;" + k));
-                response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
-                System.out.println("Resposta:" + response);
-				}
-				break;
-				
-			case 4:
-				
-				System.out.printf("Informe a chave:\n");
-				k = ler.next();
-				System.out.printf("Informe o valor:\n");
-				v = ler.next();
-				System.out.printf("Informe a versão (apenas int):\n");
-				vers = ler.nextInt();
-				
-				getValue = client.send(Message.valueOf("testandset;" + k + ";" + v + ";" + vers));
-                response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
-                System.out.println(response);
-				break;
-				
-            default:
-                System.out.println("comando inválido");
-        }
-		
 		System.out.printf("Realizar nova operação (s/n):\n");
 		novo = (char)System.in.read();
 		}while(novo=='s');
